@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+</head>
+<body><div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect,useRef,useCallback}=React;
+const LOGO_DATA_URL = "data:image/jpeg;base64,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"
+
+// ── Constants ────────────────────────────────────────────────────────────────
+const ADMIN_PIN = "085208";
+const MAX_PICKS = 5; // total individual pick slots
+const NFL_WEEKS = Array.from({ length: 18 }, (_, i) => ({ label: `Week ${i + 1}`, value: i + 1 }));
+
+// picks shape: { [gameId]: { spread?: "spread_away"|"spread_home", total?: "over"|"under" } }
+// mortalLock shape: { gameId, slot: "spread"|"total" } | null
+
+function countPicks(picks) {
+  return Object.values(picks).reduce((acc, g) => acc + (g.spread ? 1 : 0) + (g.total ? 1 : 0), 0);
+}
+
+function flatPicks(picks) {
+  // returns [{ gameId, slot, value }]
+  const out = [];
+  Object.entries(picks).forEach(([gid, g]) => {
+    if (g.spread) out.push({ gameId: gid, slot: "spread", value: g.spread });
+    if (g.total)  out.push({ gameId: gid, slot: "total",  value: g.total });
+  });
+  return out;
+}
+
+// ── ESPN logo / colors ───────────────────────────────────────────────────────
+function espnLogo(abbr) { return abbr ? `https://a.espncdn.com/i/teamlogos/nfl/500/${abbr.toLowerCase()}.png` : null; }
+const TEAM_ABBR = {
+  "Bears":"CHI","Bengals":"CIN","Bills":"BUF","Broncos":"DEN","Browns":"CLE",
+  "Buccaneers":"TB","Cardinals":"ARI","Chargers":"LAC","Chiefs":"KC","Colts":"IND",
+  "Cowboys":"DAL","Dolphins":"MIA","Eagles":"PHI","Falcons":"ATL","Giants":"NYG",
+  "Jaguars":"JAX","Jets":"NYJ","Lions":"DET","Packers":"GB","Panthers":"CAR",
+  "Patriots":"NE","Raiders":"LV","Rams":"LAR","Ravens":"BAL","Saints":"NO",
+  "Seahawks":"SEA","Steelers":"PIT","Texans":"HOU","Titans":"TEN","Vikings":"MIN",
+  "49ers":"SF","Washington":"WSH","Commanders":"WSH"
+};
+const TEAM_COLORS = {
+  CHI:"#0B162A",CIN:"#FB4F14",BUF:"#00338D",DEN:"#FB4F14",CLE:"#311D00",
+  TB:"#D50A0A",ARI:"#97233F",LAC:"#0080C6",KC:"#E31837",IND:"#002C5F",
+  DAL:"#003594",MIA:"#008E97",PHI:"#004C54",ATL:"#A71930",NYG:"#0B2265",
+  JAX:"#006778",NYJ:"#125740",DET:"#0076B6",GB:"#203731",CAR:"#0085CA",
+  NE:"#002244",LV:"#000000",LAR:"#003594",BAL:"#241773",NO:"#D3BC8D",
+  SEA:"#002244",PIT:"#FFB612",HOU:"#03202F",TEN:"#0C2340",MIN:"#4F2683",
+  SF:"#AA0000",WSH:"#5A1414"
+};
+
+// ── Storage ──────────────────────────────────────────────────────────────────
+// ── 2026 NFL Schedule (hard-coded) ───────────────────────────────────────────
+const NFL_SCHEDULE = {
+  1: [
+    {away:"Patriots",   awayAbbr:"NE",  home:"Seahawks",   homeAbbr:"SEA", kickoff:"2026-09-09T20:20:00-04:00", dateLabel:"Wed Sep 9 · 8:20 PM ET",   spread:"Seahawks -3.5",  total:"O/U 44.5"},
+    {away:"49ers",      awayAbbr:"SF",  home:"Rams",       homeAbbr:"LAR", kickoff:"2026-09-10T08:35:00-04:00", dateLabel:"Thu Sep 10 · Melbourne",    spread:"Rams -2.5",      total:"O/U 48.5"},
+    {away:"Bears",      awayAbbr:"CHI", home:"Panthers",   homeAbbr:"CAR", kickoff:"2026-09-13T13:00:00-04:00", dateLabel:"Sun Sep 13 · 1:00 PM ET",   spread:"Bears -2.5",     total:"O/U 44.5"},
+    {away:"Buccaneers", awayAbbr:"TB",  home:"Bengals",    homeAbbr:"CIN", kickoff:"2026-09-13T13:00:00-04:00", dateLabel:"Sun Sep 13 · 1:00 PM ET",   spread:"Bengals -3.5",   total:"O/U 50.5"},
+    {away:"Ravens",     awayAbbr:"BAL", home:"Colts",      homeAbbr:"IND", kickoff:"2026-09-13T13:00:00-04:00", dateLabel:"Sun Sep 13 · 1:00 PM ET",   spread:"Ravens -3.5",    total:"O/U 49.5"},
+    {away:"Bills",      awayAbbr:"BUF", home:"Texans",     homeAbbr:"HOU", kickoff:"2026-09-13T13:00:00-04:00", dateLabel:"Sun Sep 13 · 1:00 PM ET",   spread:"Bills -1.5",     total:"O/U 45.5"},
+    {away:"Saints",     awayAbbr:"NO",  home:"Lions",      homeAbbr:"DET", kickoff:"2026-09-13T13:00:00-04:00", dateLabel:"Sun Sep 13 · 1:00 PM ET",   spread:"Lions -7",       total:"O/U 48.5"},
+    {away:"Jets",       awayAbbr:"NYJ", home:"Titans",     homeAbbr:"TEN", kickoff:"2026-09-13T13:00:00-04:00", dateLabel:"Sun Sep 13 · 1:00 PM ET",   spread:"Titans -3",      total:"O/U 39.5"},
+    {away:"Falcons",    awayAbbr:"ATL", home:"Steelers",   homeAbbr:"PIT", kickoff:"2026-09-13T13:00:00-04:00", dateLabel:"Sun Sep 13 · 1:00 PM ET",   spread:"Steelers -3",    total:"O/U 42.5"},
+    {away:"Browns",     awayAbbr:"CLE", home:"Jaguars",    homeAbbr:"JAX", kickoff:"2026-09-13T13:00:00-04:00", dateLabel:"Sun Sep 13 · 1:00 PM ET",   spread:"Jaguars -7",     total:"O/U 40.5"},
+    {away:"Cardinals",  awayAbbr:"ARI", home:"Chargers",   homeAbbr:"LAC", kickoff:"2026-09-13T16:25:00-04:00", dateLabel:"Sun Sep 13 · 4:25 PM ET",   spread:"Chargers -11.5", total:"O/U 45.5"},
+    {away:"Packers",    awayAbbr:"GB",  home:"Vikings",    homeAbbr:"MIN", kickoff:"2026-09-13T16:25:00-04:00", dateLabel:"Sun Sep 13 · 4:25 PM ET",   spread:"Packers -1.5",   total:"O/U 44.5"},
+    {away:"Dolphins",   awayAbbr:"MIA", home:"Raiders",    homeAbbr:"LV",  kickoff:"2026-09-13T16:25:00-04:00", dateLabel:"Sun Sep 13 · 4:25 PM ET",   spread:"Raiders -3",     total:"O/U 41.5"},
+    {away:"Commanders", awayAbbr:"WSH", home:"Eagles",     homeAbbr:"PHI", kickoff:"2026-09-13T16:25:00-04:00", dateLabel:"Sun Sep 13 · 4:25 PM ET",   spread:"Eagles -5.5",    total:"O/U 46.5"},
+    {away:"Cowboys",    awayAbbr:"DAL", home:"Giants",     homeAbbr:"NYG", kickoff:"2026-09-13T20:20:00-04:00", dateLabel:"Sun Sep 13 · 8:20 PM ET",   spread:"Cowboys -2.5",   total:"O/U 48.5"},
+    {away:"Broncos",    awayAbbr:"DEN", home:"Chiefs",     homeAbbr:"KC",  kickoff:"2026-09-14T20:15:00-04:00", dateLabel:"Mon Sep 14 · 8:15 PM ET",   spread:"Chiefs -2.5",    total:"O/U 42.5"},
+  ],
+  2: [
+    {away:"Lions",      awayAbbr:"DET", home:"Bills",      homeAbbr:"BUF", kickoff:"2026-09-17T20:15:00-04:00", dateLabel:"Thu Sep 17 · 8:15 PM ET"},
+    {away:"Vikings",    awayAbbr:"MIN", home:"Bears",      homeAbbr:"CHI", kickoff:"2026-09-20T13:00:00-04:00", dateLabel:"Sun Sep 20 · 1:00 PM ET"},
+    {away:"Eagles",     awayAbbr:"PHI", home:"Titans",     homeAbbr:"TEN", kickoff:"2026-09-20T13:00:00-04:00", dateLabel:"Sun Sep 20 · 1:00 PM ET"},
+    {away:"Packers",    awayAbbr:"GB",  home:"Jets",       homeAbbr:"NYJ", kickoff:"2026-09-20T13:00:00-04:00", dateLabel:"Sun Sep 20 · 1:00 PM ET"},
+    {away:"Panthers",   awayAbbr:"CAR", home:"Falcons",    homeAbbr:"ATL", kickoff:"2026-09-20T13:00:00-04:00", dateLabel:"Sun Sep 20 · 1:00 PM ET"},
+    {away:"Saints",     awayAbbr:"NO",  home:"Ravens",     homeAbbr:"BAL", kickoff:"2026-09-20T13:00:00-04:00", dateLabel:"Sun Sep 20 · 1:00 PM ET"},
+    {away:"Bengals",    awayAbbr:"CIN", home:"Texans",     homeAbbr:"HOU", kickoff:"2026-09-20T13:00:00-04:00", dateLabel:"Sun Sep 20 · 1:00 PM ET"},
+    {away:"Browns",     awayAbbr:"CLE", home:"Buccaneers", homeAbbr:"TB",  kickoff:"2026-09-20T13:00:00-04:00", dateLabel:"Sun Sep 20 · 1:00 PM ET"},
+    {away:"Steelers",   awayAbbr:"PIT", home:"Patriots",   homeAbbr:"NE",  kickoff:"2026-09-20T13:00:00-04:00", dateLabel:"Sun Sep 20 · 1:00 PM ET"},
+    {away:"Raiders",    awayAbbr:"LV",  home:"Chargers",   homeAbbr:"LAC", kickoff:"2026-09-20T16:05:00-04:00", dateLabel:"Sun Sep 20 · 4:05 PM ET"},
+    {away:"Jaguars",    awayAbbr:"JAX", home:"Broncos",    homeAbbr:"DEN", kickoff:"2026-09-20T16:05:00-04:00", dateLabel:"Sun Sep 20 · 4:05 PM ET"},
+    {away:"Commanders", awayAbbr:"WSH", home:"Cowboys",    homeAbbr:"DAL", kickoff:"2026-09-20T16:25:00-04:00", dateLabel:"Sun Sep 20 · 4:25 PM ET"},
+    {away:"Seahawks",   awayAbbr:"SEA", home:"Cardinals",  homeAbbr:"ARI", kickoff:"2026-09-20T16:25:00-04:00", dateLabel:"Sun Sep 20 · 4:25 PM ET"},
+    {away:"Dolphins",   awayAbbr:"MIA", home:"49ers",      homeAbbr:"SF",  kickoff:"2026-09-20T16:25:00-04:00", dateLabel:"Sun Sep 20 · 4:25 PM ET"},
+    {away:"Colts",      awayAbbr:"IND", home:"Chiefs",     homeAbbr:"KC",  kickoff:"2026-09-20T20:20:00-04:00", dateLabel:"Sun Sep 20 · 8:20 PM ET"},
+    {away:"Giants",     awayAbbr:"NYG", home:"Rams",       homeAbbr:"LAR", kickoff:"2026-09-21T20:15:00-04:00", dateLabel:"Mon Sep 21 · 8:15 PM ET"},
+  ],
+  3: [
+    {away:"Falcons",    awayAbbr:"ATL", home:"Packers",    homeAbbr:"GB",  kickoff:"2026-09-24T20:15:00-04:00", dateLabel:"Thu Sep 24 · 8:15 PM ET"},
+    {away:"Chiefs",     awayAbbr:"KC",  home:"Dolphins",   homeAbbr:"MIA", kickoff:"2026-09-27T13:00:00-04:00", dateLabel:"Sun Sep 27 · 1:00 PM ET"},
+    {away:"Texans",     awayAbbr:"HOU", home:"Colts",      homeAbbr:"IND", kickoff:"2026-09-27T13:00:00-04:00", dateLabel:"Sun Sep 27 · 1:00 PM ET"},
+    {away:"Titans",     awayAbbr:"TEN", home:"Giants",     homeAbbr:"NYG", kickoff:"2026-09-27T13:00:00-04:00", dateLabel:"Sun Sep 27 · 1:00 PM ET"},
+    {away:"Patriots",   awayAbbr:"NE",  home:"Jaguars",    homeAbbr:"JAX", kickoff:"2026-09-27T13:00:00-04:00", dateLabel:"Sun Sep 27 · 1:00 PM ET"},
+    {away:"Bengals",    awayAbbr:"CIN", home:"Steelers",   homeAbbr:"PIT", kickoff:"2026-09-27T13:00:00-04:00", dateLabel:"Sun Sep 27 · 1:00 PM ET"},
+    {away:"Panthers",   awayAbbr:"CAR", home:"Browns",     homeAbbr:"CLE", kickoff:"2026-09-27T13:00:00-04:00", dateLabel:"Sun Sep 27 · 1:00 PM ET"},
+    {away:"Jets",       awayAbbr:"NYJ", home:"Lions",      homeAbbr:"DET", kickoff:"2026-09-27T13:00:00-04:00", dateLabel:"Sun Sep 27 · 1:00 PM ET"},
+    {away:"Seahawks",   awayAbbr:"SEA", home:"Commanders", homeAbbr:"WSH", kickoff:"2026-09-27T13:00:00-04:00", dateLabel:"Sun Sep 27 · 1:00 PM ET"},
+    {away:"Chargers",   awayAbbr:"LAC", home:"Bills",      homeAbbr:"BUF", kickoff:"2026-09-27T13:00:00-04:00", dateLabel:"Sun Sep 27 · 1:00 PM ET"},
+    {away:"Vikings",    awayAbbr:"MIN", home:"Buccaneers", homeAbbr:"TB",  kickoff:"2026-09-27T16:05:00-04:00", dateLabel:"Sun Sep 27 · 4:05 PM ET"},
+    {away:"Cardinals",  awayAbbr:"ARI", home:"49ers",      homeAbbr:"SF",  kickoff:"2026-09-27T16:05:00-04:00", dateLabel:"Sun Sep 27 · 4:05 PM ET"},
+    {away:"Ravens",     awayAbbr:"BAL", home:"Cowboys",    homeAbbr:"DAL", kickoff:"2026-09-27T16:25:00-04:00", dateLabel:"Sun Sep 27 · 4:25 PM ET · Rio"},
+    {away:"Raiders",    awayAbbr:"LV",  home:"Saints",     homeAbbr:"NO",  kickoff:"2026-09-27T16:25:00-04:00", dateLabel:"Sun Sep 27 · 4:25 PM ET"},
+    {away:"Rams",       awayAbbr:"LAR", home:"Broncos",    homeAbbr:"DEN", kickoff:"2026-09-27T20:20:00-04:00", dateLabel:"Sun Sep 27 · 8:20 PM ET"},
+    {away:"Eagles",     awayAbbr:"PHI", home:"Bears",      homeAbbr:"CHI", kickoff:"2026-09-28T20:15:00-04:00", dateLabel:"Mon Sep 28 · 8:15 PM ET"},
+  ],
+  4: [
+    {away:"Steelers",   awayAbbr:"PIT", home:"Browns",     homeAbbr:"CLE", kickoff:"2026-10-01T20:15:00-04:00", dateLabel:"Thu Oct 1 · 8:15 PM ET"},
+    {away:"Colts",      awayAbbr:"IND", home:"Commanders", homeAbbr:"WSH", kickoff:"2026-10-04T09:30:00-04:00", dateLabel:"Sun Oct 4 · 9:30 AM ET · London"},
+    {away:"Titans",     awayAbbr:"TEN", home:"Ravens",     homeAbbr:"BAL", kickoff:"2026-10-04T13:00:00-04:00", dateLabel:"Sun Oct 4 · 1:00 PM ET"},
+    {away:"Cardinals",  awayAbbr:"ARI", home:"Giants",     homeAbbr:"NYG", kickoff:"2026-10-04T13:00:00-04:00", dateLabel:"Sun Oct 4 · 1:00 PM ET"},
+    {away:"Jaguars",    awayAbbr:"JAX", home:"Bengals",    homeAbbr:"CIN", kickoff:"2026-10-04T13:00:00-04:00", dateLabel:"Sun Oct 4 · 1:00 PM ET"},
+    {away:"Patriots",   awayAbbr:"NE",  home:"Bills",      homeAbbr:"BUF", kickoff:"2026-10-04T13:00:00-04:00", dateLabel:"Sun Oct 4 · 1:00 PM ET"},
+    {away:"Cowboys",    awayAbbr:"DAL", home:"Texans",     homeAbbr:"HOU", kickoff:"2026-10-04T13:00:00-04:00", dateLabel:"Sun Oct 4 · 1:00 PM ET"},
+    {away:"Rams",       awayAbbr:"LAR", home:"Eagles",     homeAbbr:"PHI", kickoff:"2026-10-04T13:00:00-04:00", dateLabel:"Sun Oct 4 · 1:00 PM ET"},
+    {away:"Packers",    awayAbbr:"GB",  home:"Buccaneers", homeAbbr:"TB",  kickoff:"2026-10-04T13:00:00-04:00", dateLabel:"Sun Oct 4 · 1:00 PM ET"},
+    {away:"Jets",       awayAbbr:"NYJ", home:"Bears",      homeAbbr:"CHI", kickoff:"2026-10-04T13:00:00-04:00", dateLabel:"Sun Oct 4 · 1:00 PM ET"},
+    {away:"Dolphins",   awayAbbr:"MIA", home:"Vikings",    homeAbbr:"MIN", kickoff:"2026-10-04T16:05:00-04:00", dateLabel:"Sun Oct 4 · 4:05 PM ET"},
+    {away:"Broncos",    awayAbbr:"DEN", home:"49ers",      homeAbbr:"SF",  kickoff:"2026-10-04T16:25:00-04:00", dateLabel:"Sun Oct 4 · 4:25 PM ET"},
+    {away:"Chargers",   awayAbbr:"LAC", home:"Seahawks",   homeAbbr:"SEA", kickoff:"2026-10-04T16:25:00-04:00", dateLabel:"Sun Oct 4 · 4:25 PM ET"},
+    {away:"Chiefs",     awayAbbr:"KC",  home:"Raiders",    homeAbbr:"LV",  kickoff:"2026-10-04T16:25:00-04:00", dateLabel:"Sun Oct 4 · 4:25 PM ET"},
+    {away:"Lions",      awayAbbr:"DET", home:"Panthers",   homeAbbr:"CAR", kickoff:"2026-10-04T20:20:00-04:00", dateLabel:"Sun Oct 4 · 8:20 PM ET"},
+    {away:"Falcons",    awayAbbr:"ATL", home:"Saints",     homeAbbr:"NO",  kickoff:"2026-10-05T20:15:00-04:00", dateLabel:"Mon Oct 5 · 8:15 PM ET"},
+  ],
+  5: [
+    {away:"Buccaneers", awayAbbr:"TB",  home:"Cowboys",    homeAbbr:"DAL", kickoff:"2026-10-08T20:15:00-04:00", dateLabel:"Thu Oct 8 · 8:15 PM ET"},
+    {away:"Eagles",     awayAbbr:"PHI", home:"Jaguars",    homeAbbr:"JAX", kickoff:"2026-10-11T09:30:00-04:00", dateLabel:"Sun Oct 11 · 9:30 AM ET · London"},
+    {away:"Raiders",    awayAbbr:"LV",  home:"Patriots",   homeAbbr:"NE",  kickoff:"2026-10-11T13:00:00-04:00", dateLabel:"Sun Oct 11 · 1:00 PM ET"},
+    {away:"Texans",     awayAbbr:"HOU", home:"Titans",     homeAbbr:"TEN", kickoff:"2026-10-11T13:00:00-04:00", dateLabel:"Sun Oct 11 · 1:00 PM ET"},
+    {away:"Browns",     awayAbbr:"CLE", home:"Jets",       homeAbbr:"NYJ", kickoff:"2026-10-11T13:00:00-04:00", dateLabel:"Sun Oct 11 · 1:00 PM ET"},
+    {away:"Colts",      awayAbbr:"IND", home:"Steelers",   homeAbbr:"PIT", kickoff:"2026-10-11T13:00:00-04:00", dateLabel:"Sun Oct 11 · 1:00 PM ET"},
+    {away:"Bengals",    awayAbbr:"CIN", home:"Dolphins",   homeAbbr:"MIA", kickoff:"2026-10-11T13:00:00-04:00", dateLabel:"Sun Oct 11 · 1:00 PM ET"},
+    {away:"Vikings",    awayAbbr:"MIN", home:"Saints",     homeAbbr:"NO",  kickoff:"2026-10-11T13:00:00-04:00", dateLabel:"Sun Oct 11 · 1:00 PM ET"},
+    {away:"Giants",     awayAbbr:"NYG", home:"Commanders", homeAbbr:"WSH", kickoff:"2026-10-11T13:00:00-04:00", dateLabel:"Sun Oct 11 · 1:00 PM ET"},
+    {away:"Broncos",    awayAbbr:"DEN", home:"Chargers",   homeAbbr:"LAC", kickoff:"2026-10-11T16:05:00-04:00", dateLabel:"Sun Oct 11 · 4:05 PM ET"},
+    {away:"Bears",      awayAbbr:"CHI", home:"Packers",    homeAbbr:"GB",  kickoff:"2026-10-11T16:25:00-04:00", dateLabel:"Sun Oct 11 · 4:25 PM ET"},
+    {away:"Lions",      awayAbbr:"DET", home:"Cardinals",  homeAbbr:"ARI", kickoff:"2026-10-11T16:25:00-04:00", dateLabel:"Sun Oct 11 · 4:25 PM ET"},
+    {away:"49ers",      awayAbbr:"SF",  home:"Seahawks",   homeAbbr:"SEA", kickoff:"2026-10-11T16:25:00-04:00", dateLabel:"Sun Oct 11 · 4:25 PM ET"},
+    {away:"Ravens",     awayAbbr:"BAL", home:"Falcons",    homeAbbr:"ATL", kickoff:"2026-10-11T20:20:00-04:00", dateLabel:"Sun Oct 11 · 8:20 PM ET"},
+    {away:"Bills",      awayAbbr:"BUF", home:"Rams",       homeAbbr:"LAR", kickoff:"2026-10-12T20:15:00-04:00", dateLabel:"Mon Oct 12 · 8:15 PM ET"},
+  ],
+  6: [
+    {away:"Seahawks",   awayAbbr:"SEA", home:"Broncos",    homeAbbr:"DEN", kickoff:"2026-10-15T20:15:00-04:00", dateLabel:"Thu Oct 15 · 8:15 PM ET"},
+    {away:"Texans",     awayAbbr:"HOU", home:"Jaguars",    homeAbbr:"JAX", kickoff:"2026-10-18T09:30:00-04:00", dateLabel:"Sun Oct 18 · 9:30 AM ET · London"},
+    {away:"Jets",       awayAbbr:"NYJ", home:"Patriots",   homeAbbr:"NE",  kickoff:"2026-10-18T13:00:00-04:00", dateLabel:"Sun Oct 18 · 1:00 PM ET"},
+    {away:"Steelers",   awayAbbr:"PIT", home:"Buccaneers", homeAbbr:"TB",  kickoff:"2026-10-18T13:00:00-04:00", dateLabel:"Sun Oct 18 · 1:00 PM ET"},
+    {away:"Panthers",   awayAbbr:"CAR", home:"Eagles",     homeAbbr:"PHI", kickoff:"2026-10-18T13:00:00-04:00", dateLabel:"Sun Oct 18 · 1:00 PM ET"},
+    {away:"Bears",      awayAbbr:"CHI", home:"Falcons",    homeAbbr:"ATL", kickoff:"2026-10-18T13:00:00-04:00", dateLabel:"Sun Oct 18 · 1:00 PM ET"},
+    {away:"Titans",     awayAbbr:"TEN", home:"Colts",      homeAbbr:"IND", kickoff:"2026-10-18T13:00:00-04:00", dateLabel:"Sun Oct 18 · 1:00 PM ET"},
+    {away:"Saints",     awayAbbr:"NO",  home:"Giants",     homeAbbr:"NYG", kickoff:"2026-10-18T13:00:00-04:00", dateLabel:"Sun Oct 18 · 1:00 PM ET"},
+    {away:"Ravens",     awayAbbr:"BAL", home:"Browns",     homeAbbr:"CLE", kickoff:"2026-10-18T13:00:00-04:00", dateLabel:"Sun Oct 18 · 1:00 PM ET"},
+    {away:"Cardinals",  awayAbbr:"ARI", home:"Rams",       homeAbbr:"LAR", kickoff:"2026-10-18T16:05:00-04:00", dateLabel:"Sun Oct 18 · 4:05 PM ET"},
+    {away:"Chargers",   awayAbbr:"LAC", home:"Chiefs",     homeAbbr:"KC",  kickoff:"2026-10-18T16:25:00-04:00", dateLabel:"Sun Oct 18 · 4:25 PM ET"},
+    {away:"Bills",      awayAbbr:"BUF", home:"Raiders",    homeAbbr:"LV",  kickoff:"2026-10-18T16:25:00-04:00", dateLabel:"Sun Oct 18 · 4:25 PM ET"},
+    {away:"Cowboys",    awayAbbr:"DAL", home:"Packers",    homeAbbr:"GB",  kickoff:"2026-10-18T20:20:00-04:00", dateLabel:"Sun Oct 18 · 8:20 PM ET"},
+    {away:"Commanders", awayAbbr:"WSH", home:"49ers",      homeAbbr:"SF",  kickoff:"2026-10-19T20:15:00-04:00", dateLabel:"Mon Oct 19 · 8:15 PM ET"},
+  ],
+  7: [
+    {away:"Patriots",   awayAbbr:"NE",  home:"Bears",      homeAbbr:"CHI", kickoff:"2026-10-22T20:15:00-04:00", dateLabel:"Thu Oct 22 · 8:15 PM ET"},
+    {away:"Steelers",   awayAbbr:"PIT", home:"Saints",     homeAbbr:"NO",  kickoff:"2026-10-25T09:30:00-04:00", dateLabel:"Sun Oct 25 · 9:30 AM ET · Paris"},
+    {away:"Browns",     awayAbbr:"CLE", home:"Titans",     homeAbbr:"TEN", kickoff:"2026-10-25T13:00:00-04:00", dateLabel:"Sun Oct 25 · 1:00 PM ET"},
+    {away:"Dolphins",   awayAbbr:"MIA", home:"Jets",       homeAbbr:"NYJ", kickoff:"2026-10-25T13:00:00-04:00", dateLabel:"Sun Oct 25 · 1:00 PM ET"},
+    {away:"Colts",      awayAbbr:"IND", home:"Vikings",    homeAbbr:"MIN", kickoff:"2026-10-25T13:00:00-04:00", dateLabel:"Sun Oct 25 · 1:00 PM ET"},
+    {away:"Bengals",    awayAbbr:"CIN", home:"Ravens",     homeAbbr:"BAL", kickoff:"2026-10-25T13:00:00-04:00", dateLabel:"Sun Oct 25 · 1:00 PM ET"},
+    {away:"Giants",     awayAbbr:"NYG", home:"Texans",     homeAbbr:"HOU", kickoff:"2026-10-25T13:00:00-04:00", dateLabel:"Sun Oct 25 · 1:00 PM ET"},
+    {away:"Buccaneers", awayAbbr:"TB",  home:"Panthers",   homeAbbr:"CAR", kickoff:"2026-10-25T13:00:00-04:00", dateLabel:"Sun Oct 25 · 1:00 PM ET"},
+    {away:"49ers",      awayAbbr:"SF",  home:"Falcons",    homeAbbr:"ATL", kickoff:"2026-10-25T13:00:00-04:00", dateLabel:"Sun Oct 25 · 1:00 PM ET"},
+    {away:"Broncos",    awayAbbr:"DEN", home:"Cardinals",  homeAbbr:"ARI", kickoff:"2026-10-25T16:05:00-04:00", dateLabel:"Sun Oct 25 · 4:05 PM ET"},
+    {away:"Rams",       awayAbbr:"LAR", home:"Raiders",    homeAbbr:"LV",  kickoff:"2026-10-25T16:25:00-04:00", dateLabel:"Sun Oct 25 · 4:25 PM ET"},
+    {away:"Packers",    awayAbbr:"GB",  home:"Lions",      homeAbbr:"DET", kickoff:"2026-10-25T16:25:00-04:00", dateLabel:"Sun Oct 25 · 4:25 PM ET"},
+    {away:"Chiefs",     awayAbbr:"KC",  home:"Seahawks",   homeAbbr:"SEA", kickoff:"2026-10-25T20:20:00-04:00", dateLabel:"Sun Oct 25 · 8:20 PM ET"},
+    {away:"Cowboys",    awayAbbr:"DAL", home:"Eagles",     homeAbbr:"PHI", kickoff:"2026-10-26T20:15:00-04:00", dateLabel:"Mon Oct 26 · 8:15 PM ET"},
+  ],
+  8: [
+    {away:"Panthers",   awayAbbr:"CAR", home:"Packers",    homeAbbr:"GB",  kickoff:"2026-10-29T20:15:00-04:00", dateLabel:"Thu Oct 29 · 8:15 PM ET"},
+    {away:"Titans",     awayAbbr:"TEN", home:"Bengals",    homeAbbr:"CIN", kickoff:"2026-11-01T13:00:00-05:00", dateLabel:"Sun Nov 1 · 1:00 PM ET"},
+    {away:"Colts",      awayAbbr:"IND", home:"Jaguars",    homeAbbr:"JAX", kickoff:"2026-11-01T13:00:00-05:00", dateLabel:"Sun Nov 1 · 1:00 PM ET"},
+    {away:"Browns",     awayAbbr:"CLE", home:"Steelers",   homeAbbr:"PIT", kickoff:"2026-11-01T13:00:00-05:00", dateLabel:"Sun Nov 1 · 1:00 PM ET"},
+    {away:"Ravens",     awayAbbr:"BAL", home:"Bills",      homeAbbr:"BUF", kickoff:"2026-11-01T13:00:00-05:00", dateLabel:"Sun Nov 1 · 1:00 PM ET"},
+    {away:"Falcons",    awayAbbr:"ATL", home:"Buccaneers", homeAbbr:"TB",  kickoff:"2026-11-01T13:00:00-05:00", dateLabel:"Sun Nov 1 · 1:00 PM ET"},
+    {away:"Vikings",    awayAbbr:"MIN", home:"Lions",      homeAbbr:"DET", kickoff:"2026-11-01T13:00:00-05:00", dateLabel:"Sun Nov 1 · 1:00 PM ET"},
+    {away:"Cardinals",  awayAbbr:"ARI", home:"Cowboys",    homeAbbr:"DAL", kickoff:"2026-11-01T13:00:00-05:00", dateLabel:"Sun Nov 1 · 1:00 PM ET"},
+    {away:"Raiders",    awayAbbr:"LV",  home:"Jets",       homeAbbr:"NYJ", kickoff:"2026-11-01T13:00:00-05:00", dateLabel:"Sun Nov 1 · 1:00 PM ET"},
+    {away:"Chargers",   awayAbbr:"LAC", home:"Rams",       homeAbbr:"LAR", kickoff:"2026-11-01T16:05:00-05:00", dateLabel:"Sun Nov 1 · 4:05 PM ET"},
+    {away:"Chiefs",     awayAbbr:"KC",  home:"Broncos",    homeAbbr:"DEN", kickoff:"2026-11-01T16:25:00-05:00", dateLabel:"Sun Nov 1 · 4:25 PM ET"},
+    {away:"Patriots",   awayAbbr:"NE",  home:"Dolphins",   homeAbbr:"MIA", kickoff:"2026-11-01T16:25:00-05:00", dateLabel:"Sun Nov 1 · 4:25 PM ET"},
+    {away:"Eagles",     awayAbbr:"PHI", home:"Commanders", homeAbbr:"WSH", kickoff:"2026-11-01T20:20:00-05:00", dateLabel:"Sun Nov 1 · 8:20 PM ET"},
+    {away:"Bears",      awayAbbr:"CHI", home:"Seahawks",   homeAbbr:"SEA", kickoff:"2026-11-02T20:15:00-05:00", dateLabel:"Mon Nov 2 · 8:15 PM ET"},
+  ],
+  9: [
+    {away:"Jaguars",    awayAbbr:"JAX", home:"Ravens",     homeAbbr:"BAL", kickoff:"2026-11-05T20:15:00-05:00", dateLabel:"Thu Nov 5 · 8:15 PM ET"},
+    {away:"Bengals",    awayAbbr:"CIN", home:"Falcons",    homeAbbr:"ATL", kickoff:"2026-11-08T09:30:00-05:00", dateLabel:"Sun Nov 8 · 9:30 AM ET · Madrid"},
+    {away:"Jets",       awayAbbr:"NYJ", home:"Chiefs",     homeAbbr:"KC",  kickoff:"2026-11-08T13:00:00-05:00", dateLabel:"Sun Nov 8 · 1:00 PM ET"},
+    {away:"Browns",     awayAbbr:"CLE", home:"Saints",     homeAbbr:"NO",  kickoff:"2026-11-08T13:00:00-05:00", dateLabel:"Sun Nov 8 · 1:00 PM ET"},
+    {away:"Broncos",    awayAbbr:"DEN", home:"Panthers",   homeAbbr:"CAR", kickoff:"2026-11-08T13:00:00-05:00", dateLabel:"Sun Nov 8 · 1:00 PM ET"},
+    {away:"Cowboys",    awayAbbr:"DAL", home:"Colts",      homeAbbr:"IND", kickoff:"2026-11-08T13:00:00-05:00", dateLabel:"Sun Nov 8 · 1:00 PM ET"},
+    {away:"Lions",      awayAbbr:"DET", home:"Dolphins",   homeAbbr:"MIA", kickoff:"2026-11-08T13:00:00-05:00", dateLabel:"Sun Nov 8 · 1:00 PM ET"},
+    {away:"Giants",     awayAbbr:"NYG", home:"Eagles",     homeAbbr:"PHI", kickoff:"2026-11-08T13:00:00-05:00", dateLabel:"Sun Nov 8 · 1:00 PM ET"},
+    {away:"Rams",       awayAbbr:"LAR", home:"Commanders", homeAbbr:"WSH", kickoff:"2026-11-08T13:00:00-05:00", dateLabel:"Sun Nov 8 · 1:00 PM ET"},
+    {away:"Raiders",    awayAbbr:"LV",  home:"49ers",      homeAbbr:"SF",  kickoff:"2026-11-08T16:05:00-05:00", dateLabel:"Sun Nov 8 · 4:05 PM ET"},
+    {away:"Texans",     awayAbbr:"HOU", home:"Chargers",   homeAbbr:"LAC", kickoff:"2026-11-08T16:05:00-05:00", dateLabel:"Sun Nov 8 · 4:05 PM ET"},
+    {away:"Cardinals",  awayAbbr:"ARI", home:"Seahawks",   homeAbbr:"SEA", kickoff:"2026-11-08T16:25:00-05:00", dateLabel:"Sun Nov 8 · 4:25 PM ET"},
+    {away:"Packers",    awayAbbr:"GB",  home:"Patriots",   homeAbbr:"NE",  kickoff:"2026-11-08T16:25:00-05:00", dateLabel:"Sun Nov 8 · 4:25 PM ET"},
+    {away:"Buccaneers", awayAbbr:"TB",  home:"Bears",      homeAbbr:"CHI", kickoff:"2026-11-08T20:20:00-05:00", dateLabel:"Sun Nov 8 · 8:20 PM ET"},
+    {away:"Bills",      awayAbbr:"BUF", home:"Vikings",    homeAbbr:"MIN", kickoff:"2026-11-09T20:15:00-05:00", dateLabel:"Mon Nov 9 · 8:15 PM ET"},
+  ],
+  10: [
+    {away:"Commanders", awayAbbr:"WSH", home:"Giants",     homeAbbr:"NYG", kickoff:"2026-11-12T20:15:00-05:00", dateLabel:"Thu Nov 12 · 8:15 PM ET"},
+    {away:"Patriots",   awayAbbr:"NE",  home:"Lions",      homeAbbr:"DET", kickoff:"2026-11-15T09:30:00-05:00", dateLabel:"Sun Nov 15 · 9:30 AM ET · Munich"},
+    {away:"Bills",      awayAbbr:"BUF", home:"Jets",       homeAbbr:"NYJ", kickoff:"2026-11-15T13:00:00-05:00", dateLabel:"Sun Nov 15 · 1:00 PM ET"},
+    {away:"Dolphins",   awayAbbr:"MIA", home:"Colts",      homeAbbr:"IND", kickoff:"2026-11-15T13:00:00-05:00", dateLabel:"Sun Nov 15 · 1:00 PM ET"},
+    {away:"Chiefs",     awayAbbr:"KC",  home:"Falcons",    homeAbbr:"ATL", kickoff:"2026-11-15T13:00:00-05:00", dateLabel:"Sun Nov 15 · 1:00 PM ET"},
+    {away:"Vikings",    awayAbbr:"MIN", home:"Packers",    homeAbbr:"GB",  kickoff:"2026-11-15T13:00:00-05:00", dateLabel:"Sun Nov 15 · 1:00 PM ET"},
+    {away:"Jaguars",    awayAbbr:"JAX", home:"Titans",     homeAbbr:"TEN", kickoff:"2026-11-15T13:00:00-05:00", dateLabel:"Sun Nov 15 · 1:00 PM ET"},
+    {away:"Texans",     awayAbbr:"HOU", home:"Browns",     homeAbbr:"CLE", kickoff:"2026-11-15T13:00:00-05:00", dateLabel:"Sun Nov 15 · 1:00 PM ET"},
+    {away:"Panthers",   awayAbbr:"CAR", home:"Saints",     homeAbbr:"NO",  kickoff:"2026-11-15T13:00:00-05:00", dateLabel:"Sun Nov 15 · 1:00 PM ET"},
+    {away:"Rams",       awayAbbr:"LAR", home:"Cardinals",  homeAbbr:"ARI", kickoff:"2026-11-15T16:05:00-05:00", dateLabel:"Sun Nov 15 · 4:05 PM ET"},
+    {away:"Seahawks",   awayAbbr:"SEA", home:"Raiders",    homeAbbr:"LV",  kickoff:"2026-11-15T16:05:00-05:00", dateLabel:"Sun Nov 15 · 4:05 PM ET"},
+    {away:"49ers",      awayAbbr:"SF",  home:"Cowboys",    homeAbbr:"DAL", kickoff:"2026-11-15T16:25:00-05:00", dateLabel:"Sun Nov 15 · 4:25 PM ET"},
+    {away:"Steelers",   awayAbbr:"PIT", home:"Bengals",    homeAbbr:"CIN", kickoff:"2026-11-15T20:20:00-05:00", dateLabel:"Sun Nov 15 · 8:20 PM ET"},
+    {away:"Chargers",   awayAbbr:"LAC", home:"Ravens",     homeAbbr:"BAL", kickoff:"2026-11-16T20:15:00-05:00", dateLabel:"Mon Nov 16 · 8:15 PM ET"},
+  ],
+  11: [
+    {away:"Colts",      awayAbbr:"IND", home:"Texans",     homeAbbr:"HOU", kickoff:"2026-11-19T20:15:00-05:00", dateLabel:"Thu Nov 19 · 8:15 PM ET"},
+    {away:"Cardinals",  awayAbbr:"ARI", home:"Chiefs",     homeAbbr:"KC",  kickoff:"2026-11-22T13:00:00-05:00", dateLabel:"Sun Nov 22 · 1:00 PM ET"},
+    {away:"Buccaneers", awayAbbr:"TB",  home:"Lions",      homeAbbr:"DET", kickoff:"2026-11-22T13:00:00-05:00", dateLabel:"Sun Nov 22 · 1:00 PM ET"},
+    {away:"Jaguars",    awayAbbr:"JAX", home:"Giants",     homeAbbr:"NYG", kickoff:"2026-11-22T13:00:00-05:00", dateLabel:"Sun Nov 22 · 1:00 PM ET"},
+    {away:"Dolphins",   awayAbbr:"MIA", home:"Bills",      homeAbbr:"BUF", kickoff:"2026-11-22T13:00:00-05:00", dateLabel:"Sun Nov 22 · 1:00 PM ET"},
+    {away:"Titans",     awayAbbr:"TEN", home:"Cowboys",    homeAbbr:"DAL", kickoff:"2026-11-22T13:00:00-05:00", dateLabel:"Sun Nov 22 · 1:00 PM ET"},
+    {away:"Ravens",     awayAbbr:"BAL", home:"Panthers",   homeAbbr:"CAR", kickoff:"2026-11-22T13:00:00-05:00", dateLabel:"Sun Nov 22 · 1:00 PM ET"},
+    {away:"Saints",     awayAbbr:"NO",  home:"Bears",      homeAbbr:"CHI", kickoff:"2026-11-22T13:00:00-05:00", dateLabel:"Sun Nov 22 · 1:00 PM ET"},
+    {away:"Jets",       awayAbbr:"NYJ", home:"Chargers",   homeAbbr:"LAC", kickoff:"2026-11-22T16:05:00-05:00", dateLabel:"Sun Nov 22 · 4:05 PM ET"},
+    {away:"Steelers",   awayAbbr:"PIT", home:"Eagles",     homeAbbr:"PHI", kickoff:"2026-11-22T16:25:00-05:00", dateLabel:"Sun Nov 22 · 4:25 PM ET"},
+    {away:"Raiders",    awayAbbr:"LV",  home:"Broncos",    homeAbbr:"DEN", kickoff:"2026-11-22T16:25:00-05:00", dateLabel:"Sun Nov 22 · 4:25 PM ET"},
+    {away:"Vikings",    awayAbbr:"MIN", home:"49ers",      homeAbbr:"SF",  kickoff:"2026-11-22T20:20:00-05:00", dateLabel:"Sun Nov 22 · 8:20 PM ET · Mexico City"},
+    {away:"Bengals",    awayAbbr:"CIN", home:"Commanders", homeAbbr:"WSH", kickoff:"2026-11-23T20:15:00-05:00", dateLabel:"Mon Nov 23 · 8:15 PM ET"},
+  ],
+  12: [
+    {away:"Packers",    awayAbbr:"GB",  home:"Rams",       homeAbbr:"LAR", kickoff:"2026-11-25T20:00:00-05:00", dateLabel:"Wed Nov 25 · 8:00 PM ET"},
+    {away:"Bears",      awayAbbr:"CHI", home:"Lions",      homeAbbr:"DET", kickoff:"2026-11-26T13:00:00-05:00", dateLabel:"Thu Nov 26 · 1:00 PM ET"},
+    {away:"Eagles",     awayAbbr:"PHI", home:"Cowboys",    homeAbbr:"DAL", kickoff:"2026-11-26T16:30:00-05:00", dateLabel:"Thu Nov 26 · 4:30 PM ET"},
+    {away:"Chiefs",     awayAbbr:"KC",  home:"Bills",      homeAbbr:"BUF", kickoff:"2026-11-26T20:20:00-05:00", dateLabel:"Thu Nov 26 · 8:20 PM ET"},
+    {away:"Broncos",    awayAbbr:"DEN", home:"Steelers",   homeAbbr:"PIT", kickoff:"2026-11-27T15:00:00-05:00", dateLabel:"Fri Nov 27 · 3:00 PM ET"},
+    {away:"Ravens",     awayAbbr:"BAL", home:"Texans",     homeAbbr:"HOU", kickoff:"2026-11-29T13:00:00-05:00", dateLabel:"Sun Nov 29 · 1:00 PM ET"},
+    {away:"Saints",     awayAbbr:"NO",  home:"Bengals",    homeAbbr:"CIN", kickoff:"2026-11-29T13:00:00-05:00", dateLabel:"Sun Nov 29 · 1:00 PM ET"},
+    {away:"Jets",       awayAbbr:"NYJ", home:"Dolphins",   homeAbbr:"MIA", kickoff:"2026-11-29T13:00:00-05:00", dateLabel:"Sun Nov 29 · 1:00 PM ET"},
+    {away:"Falcons",    awayAbbr:"ATL", home:"Vikings",    homeAbbr:"MIN", kickoff:"2026-11-29T13:00:00-05:00", dateLabel:"Sun Nov 29 · 1:00 PM ET"},
+    {away:"Giants",     awayAbbr:"NYG", home:"Colts",      homeAbbr:"IND", kickoff:"2026-11-29T13:00:00-05:00", dateLabel:"Sun Nov 29 · 1:00 PM ET"},
+    {away:"Raiders",    awayAbbr:"LV",  home:"Browns",     homeAbbr:"CLE", kickoff:"2026-11-29T13:00:00-05:00", dateLabel:"Sun Nov 29 · 1:00 PM ET"},
+    {away:"Titans",     awayAbbr:"TEN", home:"Jaguars",    homeAbbr:"JAX", kickoff:"2026-11-29T16:05:00-05:00", dateLabel:"Sun Nov 29 · 4:05 PM ET"},
+    {away:"Commanders", awayAbbr:"WSH", home:"Cardinals",  homeAbbr:"ARI", kickoff:"2026-11-29T16:25:00-05:00", dateLabel:"Sun Nov 29 · 4:25 PM ET"},
+    {away:"Seahawks",   awayAbbr:"SEA", home:"49ers",      homeAbbr:"SF",  kickoff:"2026-11-29T16:25:00-05:00", dateLabel:"Sun Nov 29 · 4:25 PM ET"},
+    {away:"Patriots",   awayAbbr:"NE",  home:"Chargers",   homeAbbr:"LAC", kickoff:"2026-11-29T20:20:00-05:00", dateLabel:"Sun Nov 29 · 8:20 PM ET"},
+    {away:"Panthers",   awayAbbr:"CAR", home:"Buccaneers", homeAbbr:"TB",  kickoff:"2026-11-30T20:15:00-05:00", dateLabel:"Mon Nov 30 · 8:15 PM ET"},
+  ],
+  13: [
+    {away:"Chiefs",     awayAbbr:"KC",  home:"Rams",       homeAbbr:"LAR", kickoff:"2026-12-03T20:15:00-05:00", dateLabel:"Thu Dec 3 · 8:15 PM ET"},
+    {away:"Lions",      awayAbbr:"DET", home:"Falcons",    homeAbbr:"ATL", kickoff:"2026-12-06T13:00:00-05:00", dateLabel:"Sun Dec 6 · 1:00 PM ET"},
+    {away:"Chargers",   awayAbbr:"LAC", home:"Buccaneers", homeAbbr:"TB",  kickoff:"2026-12-06T13:00:00-05:00", dateLabel:"Sun Dec 6 · 1:00 PM ET"},
+    {away:"Commanders", awayAbbr:"WSH", home:"Titans",     homeAbbr:"TEN", kickoff:"2026-12-06T13:00:00-05:00", dateLabel:"Sun Dec 6 · 1:00 PM ET"},
+    {away:"Bengals",    awayAbbr:"CIN", home:"Browns",     homeAbbr:"CLE", kickoff:"2026-12-06T13:00:00-05:00", dateLabel:"Sun Dec 6 · 1:00 PM ET"},
+    {away:"49ers",      awayAbbr:"SF",  home:"Giants",     homeAbbr:"NYG", kickoff:"2026-12-06T13:00:00-05:00", dateLabel:"Sun Dec 6 · 1:00 PM ET"},
+    {away:"Packers",    awayAbbr:"GB",  home:"Saints",     homeAbbr:"NO",  kickoff:"2026-12-06T13:00:00-05:00", dateLabel:"Sun Dec 6 · 1:00 PM ET"},
+    {away:"Jaguars",    awayAbbr:"JAX", home:"Bears",      homeAbbr:"CHI", kickoff:"2026-12-06T13:00:00-05:00", dateLabel:"Sun Dec 6 · 1:00 PM ET"},
+    {away:"Eagles",     awayAbbr:"PHI", home:"Cardinals",  homeAbbr:"ARI", kickoff:"2026-12-06T16:05:00-05:00", dateLabel:"Sun Dec 6 · 4:05 PM ET"},
+    {away:"Dolphins",   awayAbbr:"MIA", home:"Broncos",    homeAbbr:"DEN", kickoff:"2026-12-06T16:05:00-05:00", dateLabel:"Sun Dec 6 · 4:05 PM ET"},
+    {away:"Panthers",   awayAbbr:"CAR", home:"Vikings",    homeAbbr:"MIN", kickoff:"2026-12-06T16:25:00-05:00", dateLabel:"Sun Dec 6 · 4:25 PM ET"},
+    {away:"Bills",      awayAbbr:"BUF", home:"Patriots",   homeAbbr:"NE",  kickoff:"2026-12-06T16:25:00-05:00", dateLabel:"Sun Dec 6 · 4:25 PM ET"},
+    {away:"Texans",     awayAbbr:"HOU", home:"Steelers",   homeAbbr:"PIT", kickoff:"2026-12-06T20:20:00-05:00", dateLabel:"Sun Dec 6 · 8:20 PM ET"},
+    {away:"Cowboys",    awayAbbr:"DAL", home:"Seahawks",   homeAbbr:"SEA", kickoff:"2026-12-07T20:15:00-05:00", dateLabel:"Mon Dec 7 · 8:15 PM ET"},
+  ],
+  14: [
+    {away:"Vikings",    awayAbbr:"MIN", home:"Patriots",   homeAbbr:"NE",  kickoff:"2026-12-10T20:15:00-05:00", dateLabel:"Thu Dec 10 · 8:15 PM ET"},
+    {away:"Broncos",    awayAbbr:"DEN", home:"Jets",       homeAbbr:"NYJ", kickoff:"2026-12-13T13:00:00-05:00", dateLabel:"Sun Dec 13 · 1:00 PM ET"},
+    {away:"Falcons",    awayAbbr:"ATL", home:"Browns",     homeAbbr:"CLE", kickoff:"2026-12-13T13:00:00-05:00", dateLabel:"Sun Dec 13 · 1:00 PM ET"},
+    {away:"Bears",      awayAbbr:"CHI", home:"Dolphins",   homeAbbr:"MIA", kickoff:"2026-12-13T13:00:00-05:00", dateLabel:"Sun Dec 13 · 1:00 PM ET"},
+    {away:"Texans",     awayAbbr:"HOU", home:"Commanders", homeAbbr:"WSH", kickoff:"2026-12-13T13:00:00-05:00", dateLabel:"Sun Dec 13 · 1:00 PM ET"},
+    {away:"Saints",     awayAbbr:"NO",  home:"Panthers",   homeAbbr:"CAR", kickoff:"2026-12-13T13:00:00-05:00", dateLabel:"Sun Dec 13 · 1:00 PM ET"},
+    {away:"Colts",      awayAbbr:"IND", home:"Eagles",     homeAbbr:"PHI", kickoff:"2026-12-13T13:00:00-05:00", dateLabel:"Sun Dec 13 · 1:00 PM ET"},
+    {away:"Buccaneers", awayAbbr:"TB",  home:"Ravens",     homeAbbr:"BAL", kickoff:"2026-12-13T13:00:00-05:00", dateLabel:"Sun Dec 13 · 1:00 PM ET"},
+    {away:"Titans",     awayAbbr:"TEN", home:"Lions",      homeAbbr:"DET", kickoff:"2026-12-13T13:00:00-05:00", dateLabel:"Sun Dec 13 · 1:00 PM ET"},
+    {away:"Chargers",   awayAbbr:"LAC", home:"Raiders",    homeAbbr:"LV",  kickoff:"2026-12-13T16:05:00-05:00", dateLabel:"Sun Dec 13 · 4:05 PM ET"},
+    {away:"Chiefs",     awayAbbr:"KC",  home:"Bengals",    homeAbbr:"CIN", kickoff:"2026-12-13T16:25:00-05:00", dateLabel:"Sun Dec 13 · 4:25 PM ET"},
+    {away:"Rams",       awayAbbr:"LAR", home:"49ers",      homeAbbr:"SF",  kickoff:"2026-12-13T16:25:00-05:00", dateLabel:"Sun Dec 13 · 4:25 PM ET"},
+    {away:"Giants",     awayAbbr:"NYG", home:"Seahawks",   homeAbbr:"SEA", kickoff:"2026-12-13T16:25:00-05:00", dateLabel:"Sun Dec 13 · 4:25 PM ET"},
+    {away:"Bills",      awayAbbr:"BUF", home:"Packers",    homeAbbr:"GB",  kickoff:"2026-12-13T20:20:00-05:00", dateLabel:"Sun Dec 13 · 8:20 PM ET"},
+    {away:"Steelers",   awayAbbr:"PIT", home:"Jaguars",    homeAbbr:"JAX", kickoff:"2026-12-14T20:15:00-05:00", dateLabel:"Mon Dec 14 · 8:15 PM ET"},
+  ],
+  15: [
+    {away:"49ers",      awayAbbr:"SF",  home:"Chargers",   homeAbbr:"LAC", kickoff:"2026-12-17T20:15:00-05:00", dateLabel:"Thu Dec 17 · 8:15 PM ET"},
+    {away:"Seahawks",   awayAbbr:"SEA", home:"Eagles",     homeAbbr:"PHI", kickoff:"2026-12-19T17:00:00-05:00", dateLabel:"Sat Dec 19 · 5:00 PM ET"},
+    {away:"Bears",      awayAbbr:"CHI", home:"Bills",      homeAbbr:"BUF", kickoff:"2026-12-19T20:20:00-05:00", dateLabel:"Sat Dec 19 · 8:20 PM ET"},
+    {away:"Jaguars",    awayAbbr:"JAX", home:"Texans",     homeAbbr:"HOU", kickoff:"2026-12-20T13:00:00-05:00", dateLabel:"Sun Dec 20 · 1:00 PM ET"},
+    {away:"Ravens",     awayAbbr:"BAL", home:"Steelers",   homeAbbr:"PIT", kickoff:"2026-12-20T13:00:00-05:00", dateLabel:"Sun Dec 20 · 1:00 PM ET"},
+    {away:"Browns",     awayAbbr:"CLE", home:"Giants",     homeAbbr:"NYG", kickoff:"2026-12-20T13:00:00-05:00", dateLabel:"Sun Dec 20 · 1:00 PM ET"},
+    {away:"Colts",      awayAbbr:"IND", home:"Titans",     homeAbbr:"TEN", kickoff:"2026-12-20T13:00:00-05:00", dateLabel:"Sun Dec 20 · 1:00 PM ET"},
+    {away:"Dolphins",   awayAbbr:"MIA", home:"Packers",    homeAbbr:"GB",  kickoff:"2026-12-20T13:00:00-05:00", dateLabel:"Sun Dec 20 · 1:00 PM ET"},
+    {away:"Saints",     awayAbbr:"NO",  home:"Buccaneers", homeAbbr:"TB",  kickoff:"2026-12-20T13:00:00-05:00", dateLabel:"Sun Dec 20 · 1:00 PM ET"},
+    {away:"Bengals",    awayAbbr:"CIN", home:"Panthers",   homeAbbr:"CAR", kickoff:"2026-12-20T13:00:00-05:00", dateLabel:"Sun Dec 20 · 1:00 PM ET"},
+    {away:"Falcons",    awayAbbr:"ATL", home:"Commanders", homeAbbr:"WSH", kickoff:"2026-12-20T13:00:00-05:00", dateLabel:"Sun Dec 20 · 1:00 PM ET"},
+    {away:"Jets",       awayAbbr:"NYJ", home:"Cardinals",  homeAbbr:"ARI", kickoff:"2026-12-20T16:05:00-05:00", dateLabel:"Sun Dec 20 · 4:05 PM ET"},
+    {away:"Cowboys",    awayAbbr:"DAL", home:"Rams",       homeAbbr:"LAR", kickoff:"2026-12-20T16:25:00-05:00", dateLabel:"Sun Dec 20 · 4:25 PM ET"},
+    {away:"Broncos",    awayAbbr:"DEN", home:"Raiders",    homeAbbr:"LV",  kickoff:"2026-12-20T16:25:00-05:00", dateLabel:"Sun Dec 20 · 4:25 PM ET"},
+    {away:"Lions",      awayAbbr:"DET", home:"Vikings",    homeAbbr:"MIN", kickoff:"2026-12-20T20:20:00-05:00", dateLabel:"Sun Dec 20 · 8:20 PM ET"},
+    {away:"Patriots",   awayAbbr:"NE",  home:"Chiefs",     homeAbbr:"KC",  kickoff:"2026-12-21T20:15:00-05:00", dateLabel:"Mon Dec 21 · 8:15 PM ET"},
+  ],
+  16: [
+    {away:"Texans",     awayAbbr:"HOU", home:"Eagles",     homeAbbr:"PHI", kickoff:"2026-12-24T20:15:00-05:00", dateLabel:"Thu Dec 24 · 8:15 PM ET"},
+    {away:"Packers",    awayAbbr:"GB",  home:"Bears",      homeAbbr:"CHI", kickoff:"2026-12-25T13:00:00-05:00", dateLabel:"Fri Dec 25 · 1:00 PM ET"},
+    {away:"Bills",      awayAbbr:"BUF", home:"Broncos",    homeAbbr:"DEN", kickoff:"2026-12-25T16:30:00-05:00", dateLabel:"Fri Dec 25 · 4:30 PM ET"},
+    {away:"Rams",       awayAbbr:"LAR", home:"Seahawks",   homeAbbr:"SEA", kickoff:"2026-12-25T20:15:00-05:00", dateLabel:"Fri Dec 25 · 8:15 PM ET"},
+    {away:"Patriots",   awayAbbr:"NE",  home:"Jets",       homeAbbr:"NYJ", kickoff:"2026-12-27T13:00:00-05:00", dateLabel:"Sun Dec 27 · 1:00 PM ET"},
+    {away:"Browns",     awayAbbr:"CLE", home:"Ravens",     homeAbbr:"BAL", kickoff:"2026-12-27T13:00:00-05:00", dateLabel:"Sun Dec 27 · 1:00 PM ET"},
+    {away:"Chargers",   awayAbbr:"LAC", home:"Dolphins",   homeAbbr:"MIA", kickoff:"2026-12-27T13:00:00-05:00", dateLabel:"Sun Dec 27 · 1:00 PM ET"},
+    {away:"Cardinals",  awayAbbr:"ARI", home:"Raiders",    homeAbbr:"LV",  kickoff:"2026-12-27T16:05:00-05:00", dateLabel:"Sun Dec 27 · 4:05 PM ET"},
+    {away:"49ers",      awayAbbr:"SF",  home:"Chiefs",     homeAbbr:"KC",  kickoff:"2026-12-27T16:25:00-05:00", dateLabel:"Sun Dec 27 · 4:25 PM ET"},
+    {away:"Jaguars",    awayAbbr:"JAX", home:"Cowboys",    homeAbbr:"DAL", kickoff:"2026-12-27T20:20:00-05:00", dateLabel:"Sun Dec 27 · 8:20 PM ET"},
+    {away:"Giants",     awayAbbr:"NYG", home:"Lions",      homeAbbr:"DET", kickoff:"2026-12-28T20:15:00-05:00", dateLabel:"Mon Dec 28 · 8:15 PM ET"},
+  ],
+  17: [
+    {away:"Ravens",     awayAbbr:"BAL", home:"Bengals",    homeAbbr:"CIN", kickoff:"2026-12-31T20:15:00-05:00", dateLabel:"Thu Dec 31 · 8:15 PM ET"},
+    {away:"Bills",      awayAbbr:"BUF", home:"Dolphins",   homeAbbr:"MIA", kickoff:"2027-01-03T13:00:00-05:00", dateLabel:"Sun Jan 3 · 1:00 PM ET"},
+    {away:"Steelers",   awayAbbr:"PIT", home:"Titans",     homeAbbr:"TEN", kickoff:"2027-01-03T13:00:00-05:00", dateLabel:"Sun Jan 3 · 1:00 PM ET"},
+    {away:"Vikings",    awayAbbr:"MIN", home:"Jets",       homeAbbr:"NYJ", kickoff:"2027-01-03T13:00:00-05:00", dateLabel:"Sun Jan 3 · 1:00 PM ET"},
+    {away:"Saints",     awayAbbr:"NO",  home:"Falcons",    homeAbbr:"ATL", kickoff:"2027-01-03T13:00:00-05:00", dateLabel:"Sun Jan 3 · 1:00 PM ET"},
+    {away:"Seahawks",   awayAbbr:"SEA", home:"Panthers",   homeAbbr:"CAR", kickoff:"2027-01-03T13:00:00-05:00", dateLabel:"Sun Jan 3 · 1:00 PM ET"},
+    {away:"Colts",      awayAbbr:"IND", home:"Browns",     homeAbbr:"CLE", kickoff:"2027-01-03T13:00:00-05:00", dateLabel:"Sun Jan 3 · 1:00 PM ET"},
+    {away:"Giants",     awayAbbr:"NYG", home:"Cowboys",    homeAbbr:"DAL", kickoff:"2027-01-03T13:00:00-05:00", dateLabel:"Sun Jan 3 · 1:00 PM ET"},
+    {away:"Raiders",    awayAbbr:"LV",  home:"Cardinals",  homeAbbr:"ARI", kickoff:"2027-01-03T16:05:00-05:00", dateLabel:"Sun Jan 3 · 4:05 PM ET"},
+    {away:"Lions",      awayAbbr:"DET", home:"Bears",      homeAbbr:"CHI", kickoff:"2027-01-03T16:25:00-05:00", dateLabel:"Sun Jan 3 · 4:25 PM ET"},
+    {away:"Eagles",     awayAbbr:"PHI", home:"49ers",      homeAbbr:"SF",  kickoff:"2027-01-03T20:20:00-05:00", dateLabel:"Sun Jan 3 · 8:20 PM ET"},
+    {away:"Texans",     awayAbbr:"HOU", home:"Packers",    homeAbbr:"GB",  kickoff:"2027-01-04T20:15:00-05:00", dateLabel:"Mon Jan 4 · 8:15 PM ET"},
+  ],
+  18: [
+    {away:"Jets",       awayAbbr:"NYJ", home:"Bills",      homeAbbr:"BUF", kickoff:"2027-01-10T13:00:00-05:00", dateLabel:"Sun Jan 10"},
+    {away:"Jaguars",    awayAbbr:"JAX", home:"Colts",      homeAbbr:"IND", kickoff:"2027-01-10T13:00:00-05:00", dateLabel:"Sun Jan 10"},
+    {away:"Raiders",    awayAbbr:"LV",  home:"Chiefs",     homeAbbr:"KC",  kickoff:"2027-01-10T13:00:00-05:00", dateLabel:"Sun Jan 10"},
+    {away:"Titans",     awayAbbr:"TEN", home:"Texans",     homeAbbr:"HOU", kickoff:"2027-01-10T13:00:00-05:00", dateLabel:"Sun Jan 10"},
+    {away:"Chargers",   awayAbbr:"LAC", home:"Broncos",    homeAbbr:"DEN", kickoff:"2027-01-10T13:00:00-05:00", dateLabel:"Sun Jan 10"},
+    {away:"Dolphins",   awayAbbr:"MIA", home:"Patriots",   homeAbbr:"NE",  kickoff:"2027-01-10T13:00:00-05:00", dateLabel:"Sun Jan 10"},
+    {away:"Browns",     awayAbbr:"CLE", home:"Bengals",    homeAbbr:"CIN", kickoff:"2027-01-10T13:00:00-05:00", dateLabel:"Sun Jan 10"},
+    {away:"Steelers",   awayAbbr:"PIT", home:"Ravens",     homeAbbr:"BAL", kickoff:"2027-01-10T13:00:00-05:00", dateLabel:"Sun Jan 10"},
+    {away:"Bears",      awayAbbr:"CHI", home:"Vikings",    homeAbbr:"MIN", kickoff:"2027-01-10T13:00:00-05:00", dateLabel:"Sun Jan 10"},
+    {away:"Lions",      awayAbbr:"DET", home:"Packers",    homeAbbr:"GB",  kickoff:"2027-01-10T13:00:00-05:00", dateLabel:"Sun Jan 10"},
+    {away:"Cowboys",    awayAbbr:"DAL", home:"Commanders", homeAbbr:"WSH", kickoff:"2027-01-10T13:00:00-05:00", dateLabel:"Sun Jan 10"},
+    {away:"Buccaneers", awayAbbr:"TB",  home:"Saints",     homeAbbr:"NO",  kickoff:"2027-01-10T13:00:00-05:00", dateLabel:"Sun Jan 10"},
+    {away:"Eagles",     awayAbbr:"PHI", home:"Giants",     homeAbbr:"NYG", kickoff:"2027-01-10T13:00:00-05:00", dateLabel:"Sun Jan 10"},
+    {away:"Seahawks",   awayAbbr:"SEA", home:"Rams",       homeAbbr:"LAR", kickoff:"2027-01-10T13:00:00-05:00", dateLabel:"Sun Jan 10"},
+    {away:"Falcons",    awayAbbr:"ATL", home:"Panthers",   homeAbbr:"CAR", kickoff:"2027-01-10T13:00:00-05:00", dateLabel:"Sun Jan 10"},
+    {away:"49ers",      awayAbbr:"SF",  home:"Cardinals",  homeAbbr:"ARI", kickoff:"2027-01-10T13:00:00-05:00", dateLabel:"Sun Jan 10"},
+  ],
+};
+
+// Build a game ID for each game
+function buildScheduleWeek(week) {
+  const games = NFL_SCHEDULE[week];
+  if (!games) return null;
+  return games.map((g, i) => ({
+    id: `w${week}g${i+1}`,
+    home: g.home, away: g.away,
+    homeAbbr: g.homeAbbr, awayAbbr: g.awayAbbr,
+    kickoff: g.kickoff, dateLabel: g.dateLabel,
+    spread: g.spread || null,  // use opening line from schedule as seed
+    total: g.total || null,    // Odds API will update with current line
+    status: "upcoming", homeScore: null, awayScore: null,
+  }));
+}
+
+// ── Odds API ──────────────────────────────────────────────────────────────────
+const ODDS_API_KEY = "293bc28ee22c199a6e2f04555b5b710f";
+const ODDS_LAST_FETCH_KEY = "odds_last_fetch";
+
+async function fetchAndCacheOdds(games, week) {
+  // Only fetch once per 24 hours
+  const lastFetch = await storageGet(ODDS_LAST_FETCH_KEY + "_w" + week);
+  const now = Date.now();
+  if (lastFetch && (now - lastFetch) < 23 * 60 * 60 * 1000) {
+    console.log("Odds fresh, skipping fetch. Next in", Math.round((23*3600000-(now-lastFetch))/3600000), "hrs");
+    return games;
+  }
+
+  try {
+    const url = `https://api.the-odds-api.com/v4/sports/americanfootball_nfl/odds?apiKey=${ODDS_API_KEY}&regions=us&markets=spreads,totals&oddsFormat=american`;
+    const res = await fetch(url);
+    if (!res.ok) { console.error("Odds API error:", res.status); return games; }
+    const oddsData = await res.json();
+
+    // Match odds to our schedule by team names
+    const updatedGames = games.map(game => {
+      const match = oddsData.find(o => {
+        const h = o.home_team?.toLowerCase() || "";
+        const a = o.away_team?.toLowerCase() || "";
+        return (h.includes(game.home.toLowerCase()) || game.home.toLowerCase().includes(h.split(" ").pop())) &&
+               (a.includes(game.away.toLowerCase()) || game.away.toLowerCase().includes(a.split(" ").pop()));
+      });
+      if (!match) return game;
+
+      let spread = null, total = null;
+      for (const bm of (match.bookmakers || [])) {
+        for (const mkt of (bm.markets || [])) {
+          if (mkt.key === "spreads" && !spread) {
+            const homeOut = mkt.outcomes?.find(o => o.name === match.home_team);
+            if (homeOut) {
+              const line = homeOut.point;
+              spread = line < 0 ? `${game.home} ${line}` : `${game.away} ${-line}`;
+            }
+          }
+          if (mkt.key === "totals" && !total) {
+            const over = mkt.outcomes?.find(o => o.name === "Over");
+            if (over) total = `O/U ${over.point}`;
+          }
+        }
+        if (spread && total) break;
+      }
+      return { ...game, spread, total };
+    });
+
+    // Cache updated games and timestamp
+    await storageSet(`games_week_${week}`, updatedGames);
+    await storageSet(ODDS_LAST_FETCH_KEY + "_w" + week, now);
+    console.log("Odds fetched and cached for Week", week);
+    return updatedGames;
+  } catch(e) {
+    console.error("fetchAndCacheOdds failed:", e);
+    return games;
+  }
+}
+
+
+function placeholderGames(week) {
+  function fk(dayOff,h,m){const d=new Date();d.setDate(d.getDate()+dayOff);d.setHours(h,m,0,0);return d.toISOString();}
+  function fl(dayOff,h,m){const d=new Date();d.setDate(d.getDate()+dayOff);const days=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];const hr=h>12?h-12:h===0?12:h,ap=h>=12?"PM":"AM",mn=m===0?"00":m;return`${days[d.getDay()]} ${months[d.getMonth()]} ${d.getDate()} · ${hr}:${mn} ${ap} ET`;}
+  const hl=week<=8;
+  const m=[
+    ["Cowboys","DAL","Eagles","PHI","Eagles -3.5","O/U 48.5",fk(4,20,20),fl(4,20,20)],
+    ["Chiefs","KC","Ravens","BAL","Chiefs -2.5","O/U 51.0",fk(7,13,0),fl(7,13,0)],
+    ["49ers","SF","Seahawks","SEA","49ers -6.5","O/U 44.0",fk(7,16,25),fl(7,16,25)],
+    ["Bills","BUF","Dolphins","MIA","Bills -4.0","O/U 49.5",fk(7,13,0),fl(7,13,0)],
+    ["Packers","GB","Lions","DET","Lions -5.5","O/U 46.5",fk(7,20,20),fl(7,20,20)],
+    ["Bengals","CIN","Steelers","PIT","Steelers -1.5","O/U 43.0",fk(8,20,15),fl(8,20,15)],
+    ["Rams","LAR","Cardinals","ARI","Rams -7.0",hl?"O/U 45.5":null,fk(7,16,25),fl(7,16,25)],
+    ["Jets","NYJ","Patriots","NE","Jets -3.0",hl?"O/U 38.5":null,fk(7,13,0),fl(7,13,0)],
+    ["Vikings","MIN","Bears","CHI",hl?"Vikings -2.5":null,hl?"O/U 42.0":null,fk(7,13,0),fl(7,13,0)],
+    ["Saints","NO","Falcons","ATL",hl?"EVEN":null,hl?"O/U 44.0":null,fk(7,13,0),fl(7,13,0)],
+  ];
+  return m.map(([away,awayAbbr,home,homeAbbr,spread,total,kickoff,dateLabel],i)=>({
+    id:`w${week}g${i+1}`,home,away,homeAbbr,awayAbbr,
+    spread:spread||null,total:total||null,kickoff,dateLabel,
+    status:"upcoming",homeScore:null,awayScore:null
+  }));
+}
+
+// ── Scoring ──────────────────────────────────────────────────────────────────
+// picks: { gameId: { spread?, total? } }
+// mortalLock: { gameId, slot } | null
+// results: { gameId: "spread_away"|"spread_home"|"push_spread"|"over"|"under"|"push_total" }
+function scoreUser(picks, mortalLock, results) {
+  let total=0;
+  const breakdown={};
+  Object.entries(picks).forEach(([gid,gamePick])=>{
+    ["spread","total"].forEach(slot=>{
+      const pick=gamePick[slot];
+      if(!pick) return;
+      // Support both flat string results (legacy) and {spread,total} object results
+      const gameResult=results[gid];
+      const res=gameResult&&typeof gameResult==="object"?gameResult[slot]:gameResult;
+      if(res==null) return;
+      const key=`${gid}:${slot}`;
+      const isMortal=mortalLock&&mortalLock.gameId===gid&&mortalLock.slot===slot;
+      const mult=isMortal?2:1;
+      let pts=0;
+      if(slot==="spread"&&pick===res) pts=1*mult;
+      else if(slot==="total"&&pick===res) pts=1*mult;
+      else if(slot==="spread"&&res==="push_spread") pts=0.5*mult;
+      else if(slot==="total"&&res==="push_total") pts=0.5*mult;
+      breakdown[key]=pts;
+      total+=pts;
+    });
+  });
+  return {total,breakdown};
+}
+
+function isGameLocked(game) {
+  if(!game.kickoff) return false;
+  try{return new Date()>=new Date(game.kickoff);}catch{return false;}
+}
+
+// ── Design ───────────────────────────────────────────────────────────────────
+const VERSION="26.9.18";
+
+const LOGO_DATA_URL = "data:image/jpeg;base64,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";
+
+
+// Theme helper — reads system preference, can be overridden
+function getSystemTheme(){ return window.matchMedia&&window.matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light"; }
+
+function makeColors(dark){
+  return dark ? {
+    bg:"#0b0f1f", surface:"#111827", surfaceHigh:"#1a2440",
+    border:"#1e2d4e", red:"#cc1d2b", redDim:"#7a1018",
+    blue:"#0a3fa8", blueBright:"#1e6fff", silver:"#c8d0e0",
+    gold:"#d4a017", green:"#22c55e", pushBlue:"#60a5fa",
+    muted:"#3d5278", text:"#eef2ff", textDim:"#7a90b8",
+  } : {
+    bg:"#f4f5f9", surface:"#ffffff", surfaceHigh:"#eaecf4",
+    border:"#d0d8e8", red:"#cc1d2b", redDim:"#f5c0c3",
+    blue:"#0a3fa8", blueBright:"#1e6fff", silver:"#0b0f1f",
+    gold:"#b8860b", green:"#16a34a", pushBlue:"#2563eb",
+    muted:"#7080a0", text:"#0b0f1f", textDim:"#3d5278",
+  };
+}
+// C is set dynamically in App — default dark for module-level usage
+const C=makeColors(true);
+function makeStyles(C){return {
+  app:{minHeight:"100vh",background:C.bg,color:C.text,fontFamily:"'Inter',sans-serif",paddingBottom:140},
+  header:{
+    background:C.bg==="#f0f2f8"?`linear-gradient(135deg,#cc1d2b 0%,#a01020 100%)`:`linear-gradient(135deg,#0d1530 0%,#0b1428 50%,#10082a 100%)`,
+    borderBottom:`3px solid ${C.red}`,
+    padding:"13px 18px",display:"flex",alignItems:"center",justifyContent:"space-between",
+    position:"sticky",top:0,zIndex:10,
+    boxShadow:`0 2px 20px rgba(204,29,43,0.25)`,
+  },
+  logo:{fontSize:17,fontWeight:900,letterSpacing:3,color:"#ffffff",display:"flex",alignItems:"center",gap:8},
+  weekBadge:{background:C.red,color:"#ffffff",fontWeight:800,fontSize:11,padding:"3px 11px",borderRadius:20,letterSpacing:1},
+  card:{background:C.surface,border:`1px solid ${C.border}`,borderRadius:12,padding:"16px 18px",margin:"10px 14px"},
+  input:{width:"100%",background:C.surface,border:`1px solid ${C.border}`,borderRadius:8,color:C.text,padding:"12px 14px",fontSize:16,boxSizing:"border-box",outline:"none"},
+  select:{width:"100%",background:C.surface,border:`1px solid ${C.border}`,borderRadius:8,color:C.text,padding:"10px 14px",fontSize:14,boxSizing:"border-box",outline:"none",cursor:"pointer"},
+  btn:(bg=C.red,fg="#ffffff")=>({width:"100%",background:bg,color:fg,border:"none",borderRadius:10,padding:"13px",fontSize:15,fontWeight:800,cursor:"pointer",letterSpacing:1}),
+  btnGhost:{background:"transparent",border:`1px solid ${C.border}`,color:C.muted,borderRadius:8,padding:"8px 14px",fontSize:13,cursor:"pointer"},
+  tab:(a)=>({flex:1,padding:"9px 4px",background:a?C.red:C.surface,color:a?"#ffffff":C.muted,border:`1px solid ${a?C.red:C.border}`,borderRadius:8,fontWeight:700,fontSize:13,cursor:"pointer"}),
+  toast:{position:"fixed",bottom:24,left:"50%",transform:"translateX(-50%)",background:C.red,color:"#ffffff",padding:"10px 24px",borderRadius:30,fontWeight:700,fontSize:14,zIndex:999,whiteSpace:"nowrap"},
+  error:{color:"#ef4444",fontSize:13,marginTop:6},
+};}
+
+
+function pickBtnStyle(active,type,C){
+  const isDarkMode = C.bg!=="#f4f5f9";
+  // Active state: colored background with white text — easy to read
+  // Inactive state: clearly visible bordered button
+  const activeColors={
+    spread:{bg:C.red,       text:"#ffffff", border:C.red},
+    over:  {bg:C.green,     text:"#ffffff", border:C.green},
+    under: {bg:C.blueBright,text:"#ffffff", border:C.blueBright},
+  };
+  const inactiveBg  = isDarkMode ? "#1e2d48" : "#eef0f6";
+  const inactiveText= isDarkMode ? "#d0ddf0" : "#3a4a68";
+  const inactiveBorder = isDarkMode ? "#3a4f72" : "#b0bcd8";
+  const ac = activeColors[type]||activeColors.spread;
+  return{
+    flex:1, padding:"9px 6px", borderRadius:9, fontSize:12, fontWeight:700,
+    cursor:"pointer", transition:"all 0.15s",
+    background: active ? ac.bg : inactiveBg,
+    color:       active ? ac.text : inactiveText,
+    border:      active ? `1.5px solid ${ac.border}` : `1.5px solid ${inactiveBorder}`,
+    minWidth:0,
+    boxShadow:   active ? `0 2px 8px ${ac.bg}66` : "none",
+  };
+}
+
+
+// Parse spread string and return { favored, line, awayLine, homeLine }
+// e.g. "Eagles -3.5" -> { favored:"home", line:3.5, awayLine:"+3.5", homeLine:"-3.5" }
+// e.g. "EVEN" -> { favored:null, line:0, awayLine:"EVEN", homeLine:"EVEN" }
+function parseSpread(game){
+  if(!game.spread) return null;
+  const s = game.spread.trim();
+  if(s.toUpperCase()==="EVEN") return {favored:null,line:0,awayLine:"EVEN",homeLine:"EVEN"};
+  const match = s.match(/^(.+?)\s+([+-]?\d+\.?\d*)$/);
+  if(!match) return {favored:null,line:0,awayLine:s,homeLine:s};
+  const teamPart = match[1].trim();
+  const lineVal = parseFloat(match[2]);
+  const favoredHome = game.home.toLowerCase().includes(teamPart.toLowerCase()) ||
+                      teamPart.toLowerCase().includes(game.home.toLowerCase().split(" ").pop());
+  const favLine = lineVal < 0 ? lineVal : -lineVal; // favorite always negative
+  const dogLine = -favLine;
+  const fmt = (n) => n > 0 ? `+${n}` : `${n}`;
+  return {
+    favored: favoredHome ? "home" : "away",
+    line: Math.abs(lineVal),
+    awayLine: favoredHome ? fmt(dogLine) : fmt(favLine),
+    homeLine: favoredHome ? fmt(favLine) : fmt(dogLine),
+  };
+}
+
+function slotLabel(game,slot,value){
+  if(!value||!game) return "";
+  if(value==="spread_away") return `${game.away} ${game.spread?.includes(game.away)?game.spread.split(" ").pop():"ATS"}`;
+  if(value==="spread_home") return `${game.home} ${game.spread?.includes(game.home)?game.spread.split(" ").pop():"ATS"}`;
+  if(value==="over") return `OVER ${game.total?.replace("O/U ","")}`;
+  if(value==="under") return `UNDER ${game.total?.replace("O/U ","")}`;
+  return value;
+}
+
+// ── PIN input ─────────────────────────────────────────────────────────────────
+function PinInput({value,onChange,label,length=4,C}){
+  const ref=useRef();
+  return(
+    <div style={{marginBottom:14}}>
+      <label style={{fontSize:11,color:C.muted,display:"block",marginBottom:8}}>{label}</label>
+      <div style={{display:"flex",gap:8,justifyContent:"center",position:"relative"}} onClick={()=>ref.current?.focus()}>
+        {Array.from({length}).map((_,i)=>(
+          <div key={i} style={{
+            width:length>4?38:52,height:56,
+            background:C.bg,
+            border:`2px solid ${value.length===i?C.red:C.border}`,
+            borderRadius:10,display:"flex",alignItems:"center",justifyContent:"center",
+            fontSize:22,fontWeight:900,
+            color:value.length>i?C.text:C.muted,
+            cursor:"pointer",transition:"border-color 0.15s",
+          }}>
+            {value.length>i?"•":""}
+          </div>
+        ))}
+        <input ref={ref} type="tel" inputMode="numeric" pattern="[0-9]*" value={value}
+          onChange={e=>{const v=e.target.value.replace(/\D/g,"").slice(0,length);onChange(v);}}
+          style={{position:"absolute",opacity:0,width:"100%",height:"100%",cursor:"pointer"}}/>
+      </div>
+    </div>
+  );
+}
+
+function TeamLogo({abbr,size=32}){
+  const[err,setErr]=useState(false);
+  if(!abbr||err) return <div style={{width:size,height:size,borderRadius:"50%",background:C.border,display:"flex",alignItems:"center",justifyContent:"center",fontSize:size*0.35,color:C.muted}}>🏈</div>;
+  return <img src={espnLogo(abbr)} onError={()=>setErr(true)} style={{width:size,height:size,objectFit:"contain"}}/>;
+}
+
+function WeekSelector({value,onChange,label}){
+  return(
+    <div style={{padding:"8px 14px 0"}}>
+      {label&&<label style={{fontSize:11,color:C.muted,display:"block",marginBottom:4}}>{label}</label>}
+      <select style={S.select} value={value} onChange={e=>onChange(Number(e.target.value))}>
+        {NFL_WEEKS.map(w=><option key={w.value} value={w.value}>{w.label}</option>)}
+      </select>
+    </div>
+  );
+}
+
+// ── Game card ─────────────────────────────────────────────────────────────────
+function GameCard({game,gamePick={},onPick,disabled,C}){  // C passed from App
+  const locked=isGameLocked(game);
+  const effectiveDisabled=disabled||locked;
+  const awayAbbr=game.awayAbbr||TEAM_ABBR[game.away];
+  const homeAbbr=game.homeAbbr||TEAM_ABBR[game.home];
+  const awayColor=TEAM_COLORS[awayAbbr]||"#1a2440";
+  const homeColor=TEAM_COLORS[homeAbbr]||"#1a2440";
+  const hasSpread=!!game.spread;
+  const hasTotal=!!game.total;
+  const hasPick=!!(gamePick.spread||gamePick.total);
+  const isDarkMode=C.bg!=="#f4f5f9";
+  const sp=parseSpread(game);
+
+  // Card colors
+  const cardBg = isDarkMode
+    ? hasPick ? "#111e35" : "#111827"
+    : hasPick ? "#e8eef8" : "#ffffff";
+  const cardBorder = isDarkMode
+    ? hasPick ? "#2a4a7a" : "#1e2d4e"
+    : hasPick ? "#99b0d8" : "#d0d8e8";
+
+  // Button styles - pill shaped
+  const btnBase = {
+    flex:1, padding:"11px 8px", borderRadius:50,
+    fontSize:13, fontWeight:700, cursor:"pointer",
+    transition:"all 0.15s", border:"2px solid",
+    fontFamily:"inherit",
+  };
+  const spreadAwayActive = gamePick.spread==="spread_away";
+  const spreadHomeActive = gamePick.spread==="spread_home";
+  const overActive = gamePick.total==="over";
+  const underActive = gamePick.total==="under";
+
+  // Color scheme: away=green, home=red, over=blue, under=orange
+  const COLOR_AWAY  = "#22c55e";
+  const COLOR_HOME  = "#cc1d2b";
+  const COLOR_OVER  = "#1e6fff";
+  const COLOR_UNDER = "#f97316";
+
+  const activeBtnStyle = (color) => ({
+    ...btnBase,
+    background:color,
+    color:"#ffffff",
+    borderColor:color,
+    boxShadow:`0 2px 12px ${color}66`,
+  });
+  const inactiveBtnStyle = {
+    ...btnBase,
+    background:"transparent",
+    color:isDarkMode?"#d0ddf0":"#2a3a58",
+    borderColor:isDarkMode?"#3a4f72":"#b8c8e0",
+  };
+
+  return(
+    <div style={{
+      background:cardBg,
+      border:`1px solid ${cardBorder}`,
+      borderRadius:14,
+      margin:"8px 14px",
+      overflow:"hidden",
+      opacity:locked&&!hasPick?0.6:1,
+      transition:"all 0.15s",
+      position:"relative",
+      boxShadow:hasPick
+        ? isDarkMode?"0 4px 16px rgba(30,80,180,0.2)":"0 4px 16px rgba(30,80,180,0.1)"
+        : isDarkMode?"0 2px 8px rgba(0,0,0,0.3)":"0 2px 8px rgba(0,0,0,0.06)",
+    }}>
+      {locked&&(
+        <div style={{position:"absolute",top:0,left:14,background:C.red,color:"#fff",fontSize:9,fontWeight:800,padding:"2px 8px",borderRadius:"0 0 6px 6px",letterSpacing:1}}>
+          LOCKED
+        </div>
+      )}
+
+      {/* Team banner */}
+      <div style={{display:"flex",height:58}}>
+        <div style={{
+          flex:1,
+          background:`linear-gradient(135deg,${awayColor}ee,${awayColor}88)`,
+          display:"flex",alignItems:"center",gap:10,padding:"0 14px",
+        }}>
+          <TeamLogo abbr={awayAbbr} size={30}/>
+          <span style={{fontWeight:800,fontSize:14,color:"#ffffff",textShadow:"0 1px 3px rgba(0,0,0,0.4)"}}>{game.away}</span>
+        </div>
+        <div style={{
+          width:34,display:"flex",alignItems:"center",justifyContent:"center",
+          background:isDarkMode?"#0d1220":"#dde5f0",
+          fontSize:12,color:C.muted,fontWeight:700,flexShrink:0,
+        }}>@</div>
+        <div style={{
+          flex:1,
+          background:`linear-gradient(225deg,${homeColor}ee,${homeColor}88)`,
+          display:"flex",alignItems:"center",justifyContent:"flex-end",gap:10,padding:"0 14px",
+        }}>
+          <span style={{fontWeight:800,fontSize:14,color:"#ffffff",textShadow:"0 1px 3px rgba(0,0,0,0.4)"}}>{game.home}</span>
+          <TeamLogo abbr={homeAbbr} size={30}/>
+        </div>
+      </div>
+
+      {/* Card body */}
+      <div style={{padding:"12px 14px 14px"}}>
+        {/* Date + spread label row */}
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
+          <span style={{fontSize:11,fontWeight:700,color:isDarkMode?"#8090b0":"#6070a0",letterSpacing:0.3}}>
+            {game.dateLabel?.toUpperCase()}
+          </span>
+          {hasPick&&!locked&&<span style={{fontSize:10,color:C.green,fontWeight:700}}>✓ PICKED</span>}
+          {hasPick&&locked&&<span style={{fontSize:10,color:C.red,fontWeight:700}}>🔒 LOCKED</span>}
+        </div>
+
+        {!hasSpread&&!hasTotal&&(
+          <div style={{fontSize:12,color:C.muted,fontStyle:"italic",textAlign:"center",padding:"8px 0"}}>Lines not yet available</div>
+        )}
+
+        {/* Spread */}
+        {hasSpread&&(
+          <div style={{marginBottom:10}}>
+            <div style={{fontSize:10,fontWeight:800,color:isDarkMode?"#8090b0":"#5060a0",letterSpacing:1,marginBottom:6}}>
+              SPREAD · {game.spread}
+            </div>
+            <div style={{display:"flex",gap:8}}>
+              <button
+                style={spreadAwayActive?activeBtnStyle(COLOR_AWAY):inactiveBtnStyle}
+                onClick={()=>!effectiveDisabled&&onPick?.(game.id,"spread","spread_away")}
+                disabled={effectiveDisabled}>
+                {game.away} {sp?.awayLine||""}
+              </button>
+              <button
+                style={spreadHomeActive?activeBtnStyle(COLOR_HOME):inactiveBtnStyle}
+                onClick={()=>!effectiveDisabled&&onPick?.(game.id,"spread","spread_home")}
+                disabled={effectiveDisabled}>
+                {game.home} {sp?.homeLine||""}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Total */}
+        {hasTotal&&(
+          <div>
+            <div style={{fontSize:10,fontWeight:800,color:isDarkMode?"#8090b0":"#5060a0",letterSpacing:1,marginBottom:6}}>
+              TOTAL · {game.total}
+            </div>
+            <div style={{display:"flex",gap:8}}>
+              <button
+                style={overActive?activeBtnStyle(COLOR_OVER):inactiveBtnStyle}
+                onClick={()=>!effectiveDisabled&&onPick?.(game.id,"total","over")}
+                disabled={effectiveDisabled}>
+                Over {game.total?.replace("O/U ","")||""}
+              </button>
+              <button
+                style={underActive?activeBtnStyle(COLOR_UNDER):inactiveBtnStyle}
+                onClick={()=>!effectiveDisabled&&onPick?.(game.id,"total","under")}
+                disabled={effectiveDisabled}>
+                Under {game.total?.replace("O/U ","")||""}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+//
+
+// ════════════════════════════════════════════════════════════════════════════
+
+// ── SUPABASE ─────────────────────────────────────────────────────────────────
+const SB_URL="https://kurioruprxcydzuruiqy.supabase.co";
+const SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt1cmlvcnVwcnhjeWR6dXJ1aXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg4ODQxMTcsImV4cCI6MjEwNDQ2MDExN30.v-Ie_HY5UQ1Lvfu8fHJ918766g-DBIzF9gYZZoiyzpQ";
+const ODDS_API_KEY="293bc28ee22c199a6e2f04555b5b710f";
+async function sbQuery(table,params=""){const r=await fetch(`${SB_URL}/rest/v1/${table}${params}`,{headers:{"apikey":SB_KEY,"Authorization":`Bearer ${SB_KEY}`,"Content-Type":"application/json"}});if(!r.ok)throw new Error(await r.text());return r.json();}
+async function sbUpsert(table,data,onConflict){const r=await fetch(`${SB_URL}/rest/v1/${table}?on_conflict=${onConflict}`,{method:"POST",headers:{"apikey":SB_KEY,"Authorization":`Bearer ${SB_KEY}`,"Content-Type":"application/json","Prefer":"resolution=merge-duplicates,return=minimal"},body:JSON.stringify(data)});if(!r.ok)throw new Error(await r.text());}
+async function sbUpdate(table,data,match){const p=Object.entries(match).map(([k,v])=>`${k}=eq.${v}`).join("&");const r=await fetch(`${SB_URL}/rest/v1/${table}?${p}`,{method:"PATCH",headers:{"apikey":SB_KEY,"Authorization":`Bearer ${SB_KEY}`,"Content-Type":"application/json","Prefer":"return=minimal"},body:JSON.stringify(data)});if(!r.ok)throw new Error(await r.text());}
+async function sbDelete(table,match){const p=Object.entries(match).map(([k,v])=>`${k}=eq.${v}`).join("&");const r=await fetch(`${SB_URL}/rest/v1/${table}?${p}`,{method:"DELETE",headers:{"apikey":SB_KEY,"Authorization":`Bearer ${SB_KEY}`,"Prefer":"return=minimal"}});if(!r.ok)throw new Error(await r.text());}
+async function dbGet(key){try{const rows=await sbQuery("app_state",`?select=value&key=eq.${key}`);return rows[0]?.value??null;}catch(e){return null;}}
+async function dbSet(key,value){await sbUpsert("app_state",{key,value},"key");}
+async function storageGet(key){return dbGet(key);}
+async function storageSet(key,val){return dbSet(key,val);}
+async function dbGetRoster(){try{const rows=await sbQuery("roster","?select=name,pin&order=name.asc");return rows||[];}catch(e){return[];}}
+async function dbAddPlayer(name,pin){await sbUpsert("roster",{name,pin},"name");}
+async function dbRemovePlayer(name){await sbDelete("roster",{name});}
+async function dbUpdatePin(name,pin){await sbUpdate("roster",{pin},{name});}
+async function dbGetPicks(player,week){try{const rows=await sbQuery("picks",`?select=picks,mortal_lock&player_name=eq.${encodeURIComponent(player)}&week=eq.${week}`);return rows[0]?{picks:rows[0].picks||{},mortalLock:rows[0].mortal_lock||null}:null;}catch(e){return null;}}
+async function dbSetPicks(player,week,picks,mortalLock){await sbUpsert("picks",{player_name:player,week,picks,mortal_lock:mortalLock},"player_name,week");}
+async function dbGetAllPicks(week){try{const rows=await sbQuery("picks",`?select=player_name,picks,mortal_lock&week=eq.${week}`);const picks={},mortals={};(rows||[]).forEach(r=>{picks[r.player_name]=r.picks||{};mortals[r.player_name]=r.mortal_lock||null;});return{picks,mortals};}catch(e){return{picks:{},mortals:{}};}}
+async function dbGetResults(week){try{const rows=await sbQuery("results",`?select=results&week=eq.${week}`);return rows[0]?.results||null;}catch(e){return null;}}
+async function dbSetResults(week,results){await sbUpsert("results",{week,results},"week");}
+async function dbGetAvatar(player){try{const rows=await sbQuery("avatars",`?select=photo&player_name=eq.${encodeURIComponent(player)}`);return rows[0]?.photo||null;}catch(e){return null;}}
+async function dbSetAvatar(player,photo){await sbUpsert("avatars",{player_name:player,photo},"player_name");}
+async function dbGetAllAvatars(){try{const rows=await sbQuery("avatars","?select=player_name,photo");const m={};(rows||[]).forEach(r=>m[r.player_name]=r.photo);return m;}catch(e){return{};}}
+// stubs for old JSONBin code still referenced in JSX base
+let _binId=null,_apiKey=null,_cache=null,_dirty=false,_saveTimer=null;
+function setJsonBinConfig(){}
+async function loadBin(){return true;}
+async function saveBin(){return true;}
+async function createBin(){return null;}
+async function storageSaveNow(){return true;}
+const JSONBIN_BASE="";
+
+
+function App() {
+  return <div>Clean globals OK! Schedule weeks: {Object.keys(NFL_SCHEDULE).length}</div>;
+}
+const root=ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App/>);
+</script>
+</body></html>
